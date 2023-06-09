@@ -5,7 +5,8 @@
 - John Gervasoni
 - Jisoo Kim
 
-
+### EulerMotif Pipeline
+TODO : need to edit
 <p align="center">
   <img src="https://github.com/itsjisookim/CSE185-Project-JisooKim-JohnGervasoni/assets/68795655/2666d3e9-b698-44c1-8cda-03fe540b2184" />
 </p>
