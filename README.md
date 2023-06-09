@@ -1,4 +1,4 @@
-## TOOL NAME (TBD)
+## EulerMotif
 (WORK IN PROGRESS)
 
 #### Creators
@@ -6,7 +6,7 @@
 - Jisoo Kim
 
 ### User Guide
-Step-by-step guide to run [TOOL NAME]
+Step-by-step guide to run [EulerMotif]
 
 **Step 1 : Setup**
 This tool is based on python pacakges and the following should be installed before running
