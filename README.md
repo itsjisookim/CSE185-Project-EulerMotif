@@ -8,7 +8,7 @@
 ### EulerMotif Pipeline
 TODO : need to edit
 <p align="center">
-  <img src="https://github.com/itsjisookim/CSE185-Project-JisooKim-JohnGervasoni/blob/main/figures/EulerMotif_Pipeline.png" />
+  <img src="https://github.com/itsjisookim/CSE185-Project-JisooKim-JohnGervasoni/blob/main/figures/EulerMotif_Pipeline.v1.png" />
 </p>
 
 ### User Guide
