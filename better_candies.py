@@ -9,12 +9,11 @@ def toCSV(file_name, chromosome, MotifDict):
     with open(f, 'w') as csvFile:
         header = "Motif\tFile.Chromosome\tTotal\tLocations\n"
         csvFile.write(header) 
-        f = f[:-3]
+        f = f[:-4]
         for key,value in MotifDict.items():
             count = str(len(value))
             #value_string = np.array2string(value, separator=',')
             value_string = "".join(str(value))
-            print(value_string)
             line = key + '\t' + f + '\t' + count + '\t' + value_string + '\n'
             csvFile.write(line)
     return
@@ -29,6 +28,7 @@ def GetMotifs(file_name, chromosome, chromosome_string, Values):
         end = row[1]
         motif = chromosome_string[start:end]
         if motif in MotifDict:
+            print("Copy" + motif)
             values = MotifDict[motif]
             values.append(int(row[0]))
             MotifDict[motif] = values
@@ -70,9 +70,6 @@ def Candies(fasta, peakDict):
                     print("Small chromosome")
                     print(chromosome)
                     print(type(chromosome))
-                for value in peak_keys:
-                    if chromosome == value:
-                        print(value)
                 if chromosome in peak_keys:
                     inPeak = True
                 else:
