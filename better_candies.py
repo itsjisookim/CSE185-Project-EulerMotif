@@ -31,6 +31,7 @@ def GetMotifs(file_name, chromosome, chromosome_string, Values):
         if motif in MotifDict:
             values = MotifDict[motif]
             values.append(int(row[0]))
+            MotifDict[motif] = values
         else:
             MotifDict[motif] = [int(row[0])]
         np_index = np_index + 1
