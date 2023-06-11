@@ -20,10 +20,11 @@ Step-by-step guide to run [EulerMotif]
 4. Run pre_controller to create a motif CSV named "Results.csv"
 </code></pre>
 For Mac or Linux version simply run:
-<pre><code>$ python pre_controller.py [-chr/-h]
-</code></pre>
+<pre><code>$ python pre_controller.py [-chr/-h]  
    [-h] - help message
    [-chr C] - specify chromosome C
+</code></pre>
+
 
 # Demo pre_controller  
 The purpose of the pre_simulator is the generate a limited number (5) of generated peaks from a large genome fasta file.
