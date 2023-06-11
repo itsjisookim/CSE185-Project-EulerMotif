@@ -15,13 +15,20 @@ Step-by-step guide to run [EulerMotif]
 1. Clone the Repository into your IDE
 <pre><code>git clone https://github.com/itsjisookim/CSE185-Project-EulerMotif.git
 </code></pre>
-
-2. Setup Installation
-For Windows version:
-<pre><code>
+2. Create Fasta and Peak folders
+3. Load files of interest into their respective folder
+4. Run pre_controller to create a motif CSV named "Results.csv"
 </code></pre>
-For Mac version:
-<pre><code>
+For Mac or Linux version simply run:
+<pre><code>$ python pre_controller.py [-chr/-h]
+</code></pre>
+   [-h] - help message
+   [-chr C] - specify chromosome C
+
+# Demo pre_controller  
+The purpose of the pre_simulator is the generate a limited number (5) of generated peaks from a large genome fasta file.
+To demo pre_controller run pre_simulator 
+<pre><code>$ python pre_simulator [Fasta file] [Number of Lines to Read Per Chromosome]
 </code></pre>
 
 3. Usage of EulerMotif requires installing ==eulerr== library to be installed. If unable to install, you can use EulerStat.csv and produce final plots via [online eulerr](https://eulerr.co/)
