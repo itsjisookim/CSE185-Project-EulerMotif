@@ -2,23 +2,22 @@ import numpy as np
 import sys
 import os
 import csv
-
+# Author: John Gervasoni
 def toCSV(file_name, chromosome, MotifDict):
     print("MADE IT!")
     f = file_name + '.' + chromosome + '.csv'
     with open(f, 'w') as csvFile:
-        header = "Motif\tFile.Chromosome\tTotal\tLocations\n"
+        header = "Motif\tGenome\tChromosome\tTotal\tLocations\n"
         csvFile.write(header) 
-        f = f[:-4]
         for key,value in MotifDict.items():
             count = str(len(value))
             #value_string = np.array2string(value, separator=',')
-            value_string = "".join(str(value))
-            line = key + '\t' + f + '\t' + count + '\t' + value_string + '\n'
+            value_string = "".join(value)
+            line = key + '\t' + file_name + '\t' + chromosome + '\t' + count + '\t' + value_string + '\n'
             csvFile.write(line)
     return
 
-def GetMotifs(file_name, chromosome, chromosome_string, Values):
+def GetMotifs(genome, peak_filename, chromosome, chromosome_string, Values):
     print("Inside GetMotifs")
     np_index = 0
     MotifDict = {}
@@ -27,25 +26,25 @@ def GetMotifs(file_name, chromosome, chromosome_string, Values):
         start = row[0]
         end = row[1]
         motif = chromosome_string[start:end]
+        Genome_chromosome_Peakfile_Starting_Location = genome + '.' + chromosome + '.' + peak_filename + '.' + str(row[0])
         if motif in MotifDict:
             print("Copy" + motif)
             values = MotifDict[motif]
-            values.append(int(row[0]))
+            values.append(Genome_chromosome_Peakfile_Starting_Location)
             MotifDict[motif] = values
         else:
-            MotifDict[motif] = [int(row[0])]
+            MotifDict[motif] = [Genome_chromosome_Peakfile_Starting_Location]
         np_index = np_index + 1
 
-    toCSV(file_name, chromosome, MotifDict)
+    return MotifDict
 
-    return
-
-def Candies(fasta, peakDict):
+def Candies(fasta, peak_filename, peakDict):
+    MotifDict = {}
     print("In Candies")
     file_name = os.path.basename(fasta)
     file_name = file_name.partition('.')[0]
     peak_keys = list(peakDict.keys())
-    print(peak_keys)
+    #print(peak_keys)
     chromosome_string = ""
     chromosome = ""
     inPeak = False
@@ -55,21 +54,22 @@ def Candies(fasta, peakDict):
         for line in read_file:
             #print('s')
             if line[0] == '>':
-                print("Chromosome equals")
-                print(chromosome)
+                #print("Chromosome equals")
+                #print(chromosome)
                 if chromosome_string != "":
                     Values = peakDict[chromosome]
-                    GetMotifs(file_name, chromosome, chromosome_string, Values)
+                    temp_Dict = GetMotifs(file_name, peak_filename, chromosome, chromosome_string, Values)
+                    MotifDict.update(temp_Dict)
                 if len(line) > 7:
                     chromosome = line.partition(file_name + ':')[2]
                     chromosome = chromosome.partition(':')[0] 
-                    print("Current chromosome")
+                    #print("Current chromosome")
                 else:
                     chromosome = str(line[4:])
                     chromosome = chromosome.rstrip('\n')
-                    print("Small chromosome")
-                    print(chromosome)
-                    print(type(chromosome))
+                    #print("Small chromosome")
+                    #print(chromosome)
+                    #print(type(chromosome))
                 if chromosome in peak_keys:
                     inPeak = True
                 else:
@@ -80,97 +80,10 @@ def Candies(fasta, peakDict):
                 chromosome_string = chromosome_string + temp
         if chromosome_string != "":
             Values = peakDict[chromosome]
-            GetMotifs(file_name, chromosome, chromosome_string, Values)
+            temp_Dict = GetMotifs(file_name, peak_filename, chromosome, chromosome_string, Values)
+            MotifDict.update(temp_Dict)
 
-        '''
-        loc = 0
-        motifDict = {}
-        #Loop through genome
-        line = read_file.readline()
-        print(line)
-        np_index = 0
-        print("IN HERE!")
-        while(True):
-            # Find out if the line specifies chromosome
-            if line == "":
-                break
-            if line[0] == '>':
-                loc = 0
-                if motifDict:
-                    toCSV(chromosome, motifDict)
-                if len(line) > 7:
-                    chromosome = line.partition(file_name + ':')[2]
-                    chromosome = chromosome.partition(':')[0] 
-                else:
-                    chromosome = line[1:]
-                line = read_file.readline()
-            elif chromosome not in peak_keys:
-                line = read_file.readline()
-                continue
-            else:
-                Values = peakDict[chromosome]
-                row = Values[np_index,:]
-                while(True):
-                    line = line.rstrip('\n')
-                    loc = loc + len(line)
-                    bool_start = True
-                    end_in_one_line = False
-                    start = 0
-                    end = 0
-                    motif = ""
-                    # When peak is located, loop through until finished
-                    while (True):
-                        # continue if not at a peak
-                        if loc < row[0]:
-                            break
-                        # store starting location
-                        elif loc > row[0] and bool_start == True:
-                            bool_start = False 
-                            end_in_one_line = True 
-                            # Store starting pointer
-                            start = row[0] - loc 
-                        # If peak has ended 
-                        elif loc > row[1]:
-                            # Get end location
-                            end = row[1] - loc
-                            # Check if peak is in one line
-                            if end_in_one_line == True:
-                                motif = line[start:end]
-                            else:
-                                # Add remaining bases to motif
-                                motif = motif + line[:e]
-                            # Check to see if motif is already in motifDict
-                            if motif in motifDict:
-                                Val_array = motifDict[motif]
-                                Val_array.append(row[0])
-                                motifDict[motif] = Val_array
-                            else:
-                                motifDict[motif] = [row[0]]
-                            # Increase numpy array index
-                            np_index = np_index + 1
-                            # Check if finished
-                            if np_index >= len(Values):
-                                break
-                            #Else change to new row
-                            row = Values[np_index,:]
-                            # Reset motif
-                            motif = ""
-                        elif end_in_one_line == True:
-                            motif = line[s:]
-                            end_in_one_line = False
-                            break
-                        # If motif isn't empty
-                    else:
-                        motif = motif + line
-                        break
-                # Check if finished
-                if np_index >= len(Values):
-                    break
-                else:
-                    line = read_file.readline()
-
-        '''
-    return 
+    return MotifDict
 
 
 

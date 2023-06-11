@@ -2,6 +2,9 @@ import numpy as np
 import sys
 import os
 import csv
+
+# Author: John Gervasoni
+
 # Input: 
 #   Peak file
 #   boolean: print sorted peaks
@@ -9,7 +12,8 @@ import csv
 #   Returns Dictionary of peaks {Chromosome: Numpy array [Start, End]}
 #   Writes an ordered file if SortPrint = True
 def SortPeaks(Peakfile, c=None):
-    file_name = ""
+    file_name = os.path.basename(Peakfile)
+    file_name = file_name.partition('.')[0]
     '''
     if SortPrint:
         file_name = Peakfile.name
@@ -28,40 +32,40 @@ def SortPeaks(Peakfile, c=None):
 
     retVal = {}
     #toPrint = {}
-    #with open(Peakfile, 'r') as file:
-    for line in Peakfile:
-        if line[0] == '#':
-            continue
+    with open(Peakfile, 'r') as file:
+        for line in file:
+            if line[0] == '#':
+                continue
 
-        temp = line.split(None, 4)
+            temp = line.split(None, 4)
 
-        if first_time == True:
-            chromosome = temp[1]
-            first_time = False
-        elif bool_chr and chromosome != temp[1]:
-            finish = True
-            continue
-        elif chromosome != temp[1]:
-            print("Inside elif")
-            print(temp[1])
-            #toPrint[chromosome] = locations
-            #print("locations equals")
-            #print(locations)
-            nparray = np.array(locations)
-            if chromosome in retVal:
-                arr = retVal[chromosome]
-                nparray = np.concatenate((nparray,arr),axis=0)
-                nparray = nparray[nparray[:,0].argsort()]
-                retVal[chromosome] = nparray
-            else:
-                nparray = nparray[nparray[:,0].argsort()]
-                retVal[chromosome] = nparray
-            chromosome = temp[1]
-            locations.clear()
-            if finish:
-                break
-        locations.append([int(temp[2]),int(temp[3])])
-        bool_chr = False 
+            if first_time == True:
+                chromosome = temp[1]
+                first_time = False
+            elif bool_chr and chromosome != temp[1]:
+                finish = True
+                continue
+            elif chromosome != temp[1]:
+                #print("Inside elif")
+                #print(temp[1])
+                #toPrint[chromosome] = locations
+                #print("locations equals")
+                #print(locations)
+                nparray = np.array(locations)
+                if chromosome in retVal:
+                    arr = retVal[chromosome]
+                    nparray = np.concatenate((nparray,arr),axis=0)
+                    nparray = nparray[nparray[:,0].argsort()]
+                    retVal[chromosome] = nparray
+                else:
+                    nparray = nparray[nparray[:,0].argsort()]
+                    retVal[chromosome] = nparray
+                chromosome = temp[1]
+                locations.clear()
+                if finish:
+                    break
+            locations.append([int(temp[2]),int(temp[3])])
+            bool_chr = False 
 
     nparray = np.array(locations)
     if chromosome in retVal:

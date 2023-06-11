@@ -1,10 +1,12 @@
 import sys 
 import os
 import argparse
+import csv
 from Sort_Peaks import *
 from better_candies import *
 from pathlib import Path
 
+# Author: John Gervasoni
 
 class Formatter(argparse.HelpFormatter):
     # use defined argument order to display usage
@@ -28,32 +30,63 @@ class Formatter(argparse.HelpFormatter):
         # prefix with 'usage:'
         return '%s%s\n\n' % (prefix, usage)
 
-def Controller(Peakfile, c=None):
-    
-    peak_dict = SortPeaks(Peakfile, c)
+# Values go in order: Genome.Chromosome.Peakfile.StartingLocation
+# Order of CSV: Motif - Count - Genome - Chromosome - Peakfile - StartingLocation
+def toCSV(Everything):
 
-    source_dir = Path('Fasta/')
-    files = source_dir.glob('*.fa')
+    with open('Results.csv','w') as csvFile:
+        
+        for key,value in Everything.items():
+            AfterFirstLine = False
+            count = str(len(value))
+            string = key + '\t' + count + '\t'
+            for line in value:
+                if AfterFirstLine:
+                    string = '\t\t'
+                line = line.replace('.','\t')
+                string = string + line + '\n'
+                csvFile.write(string)
 
-    dic = {}
-    # peak_dict should only have the chromosome we are interested in
-    for fasta in files:
-        dic = Candies(fasta, peak_dict)
+
+def Controller(c=None):
     
-    
-    return peak_dict
+    peak_dir = Path('Peak/')
+    peak_files = peak_dir.glob('*.txt')
+    peak_dict = {}
+
+    Everything = {}
+    for peak in peak_files:
+        peak_filename = os.path.basename(peak)
+        peak_filename = peak_filename.partition('.')[0]
+        print("For " + peak_filename)
+        peak_dict = SortPeaks(peak,c)
+
+        source_dir = Path('Fasta/')
+        files = source_dir.glob('*.fa')
+
+        dic = {}
+        # peak_dict should only have the chromosome we are interested in
+        for fasta in files:
+            print("Inside fasta")
+            temp_Dict = Candies(fasta, peak_filename,  peak_dict)
+            Everything.update(temp_Dict)    
+        print() 
+    toCSV(Everything)
+
+    return Everything
 
 
 if __name__=='__main__':
 
-    file1 = sys.argv[1]
+    #file1 = sys.argv[1]
 
     parser = argparse.ArgumentParser(formatter_class=Formatter)
-
+    '''
     parser.add_argument('PeakFile',
                         type=argparse.FileType('r'),
                         help='input file of Peaks'
                         )
+    '''
     '''  
     parser.add_argument('-s','--Sort_Peaks',
                         action='store_true',
@@ -68,5 +101,4 @@ if __name__=='__main__':
                         )
    
     args = parser.parse_args()
-    GM = Controller(args.PeakFile, args.c)
-
+    GM = Controller(args.c)
